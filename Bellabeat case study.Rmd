@@ -1,0 +1,105 @@
+---
+title: "Bellabeat case study"
+author: "Santosh"
+date: '2022-05-13'
+output: html_document
+---
+##Case Scenario
+    Bellabeat is a successful small company, but they have the potential to become a larger player in the global smart device market.Urška Sršen, cofounder and Chief Creative Officer of Bellabeat, believes that analyzing smart device fitness data could help unlock new growth opportunities for the company. You have been asked to focus on one of Bellabeat’s products and analyze smart device data to gain insight into how consumers are using their smart devices. The insights you discover will then help guide marketing strategy for the company. You will present your analysis to the Bellabeat executive team along with your high-level recommendations for Bellabeat’s marketing strategy.
+    
+## As a junior data analyst I will use Ask, Prepare, Process, Analyze, Share and Act for data analysis.
+
+## Ask
+  * What is the problem you are trying to solve?
+  -- To gain insight into how consumers use non-bellabeat smart devices and select one bellabeat product to apply these insights.
+  
+  * How can your insights drive business decisions?
+  -- Analysing smart device usages data and following trend information to make future business decisions.
+
+## Prepare
+    The data was stored at FitBit Fitness Tracker Data (CC0: Public Domain, dataset made available through Mobius): This Kaggle data set contains personal fitness tracker from thirty fitbit users. Thirty eligible Fitbit users consented to the submission of personal tracker data, including minute-level output for physical activity, heart rate, and sleep monitoring. It includes information about daily activity, steps, and heart rate that can be used to explore users’ habits.
+    
+-- Importing data
+```{r}
+install.packages('tidyverse')
+library(tidyverse)
+```
+```{r}
+dailyActivity <- read_csv('dailyActivity_merged.csv')
+```
+```{r}
+heartrate <- read_csv('heartrate_seconds_merged.csv')
+View(heartrate)
+```
+```{r}
+sleep <- read_csv('sleepDay_merged.csv')
+view(sleep)
+```
+```{r}
+weight <- read_csv('weightLogInfo_merged.csv')
+View(weight)
+```
+```{r}
+sapply(dailyActivity, function(x) length(unique(x)))
+sapply(heartrate, function(x) length(unique(x)))
+sapply(sleep, function(x) length(unique(x)))
+sapply(weight, function(x) length(unique(x)))
+```
+* Take away
+    Insufficient data - heartrate file 14 user, sleep file 24 user, weight file 8 user, and dailyActivity file 33 user
+    
+## Process
+    Checking how many observations are there in each dataframe
+```{r observation}
+nrow(dailyActivity)
+nrow(sleep)
+nrow(heartrate)
+nrow(weight)
+```
+observations for hearrate 2483658, dailyactivity 940, sleep 413, and weight 67.
+
+Checking mean, median and max 
+```{r}
+dailyActivity%>%
+  select(TotalSteps, TotalDistance, SedentaryMinutes) %>%
+  summary()
+```
+```{r}
+sleep%>%
+  select(TotalSleepRecords, TotalMinutesAsleep, TotalTimeInBed) %>%
+  summary()
+```
+
+```{r}
+weight%>%
+  select(WeightKg, Fat, BMI) %>%
+  summary()
+```
+```{r}
+dailysleep <- merge(sleep, dailyActivity, by="Id")
+View(dailysleep)
+```
+
+## Analyze
+
+```{r}
+ggplot(data = dailysleep, aes(x=TotalMinutesAsleep, y=VeryActiveMinutes)) +geom_point()
+```
+Graph above shows that the users who slept in between 200 to 600 minutes have 50 to 200 very active minutes. 
+
+```{r}
+ggplot(data=dailyActivity, aes(x=TotalSteps, y=SedentaryMinutes)) + geom_point()
+```
+Graph above shows, user with total steps between 0 to 15000 have sedentary minutes of 500 to 1500. 
+
+```{r}
+ggplot(data=sleep, aes(x=TotalMinutesAsleep, y=TotalTimeInBed)) + geom_point()
+```
+Graph above shows a liner trend which explain users slept exact time as they were in bed.
+
+## Share
+    According to totalminutes sleep and very active minute data we can analyze that Users who slept more has more active minutes, where as total steps vs sedentary minutes shows the products can be marketed to user 0 to 20000 steps. Finally, total minutes sleep vs total time in bed shows linear relationship.
+    
+## Act
+    Weight and sleep data was limited compared to daily activity data. Going forward, to improve the process we can focus on collecting more data.
+    
